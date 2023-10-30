@@ -1,6 +1,9 @@
 ﻿-- Exported from QuickDBD: https://www.quickdatabasediagrams.com/
 -- NOTE! If you have used non-SQL datatypes in your design, you will have to change these here.
 
+--Creating all tables matching the CSV files, in order of Primary Key holders to Foreign Key holders 
+--to minimize importing issues
+--Important information to remember about Primary keys: These values must NOT repeat in the rows
 
 CREATE TABLE "departments" (
     "dept_no" VARCHAR   NOT NULL,
@@ -39,6 +42,10 @@ CREATE TABLE "salaries" (
      )
 );
 
+-- Note: dept_emp.csv will be a Junction table
+-- Despite 'emp_no' fitting the criteria of a primary key, it will not be one because of it holding the position of 
+-- a junction table 
+
 CREATE TABLE "dept_emp" (
     "emp_no" INTEGER   NOT NULL,
     "dept_no" VARCHAR   NOT NULL
@@ -68,13 +75,16 @@ ALTER TABLE "dept_manager" ADD CONSTRAINT "fk_dept_manager_emp_no" FOREIGN KEY("
 REFERENCES "employees" ("emp_no");
 
 --SECTION 2 DATA ANALYSIS
---Listing the employee number, last name, first name, sex, and salary of each employee.
+
+-- For quicker acccess to tables and double check columns, listing all columns from tables below
 SELECT * FROM departments
 SELECT * FROM dept_emp
 SELECT * FROM dept_manager
 SELECT * FROM employees
 SELECT * FROM salaries
 SELECT * FROM titles
+
+--Listing the employee number, last name, first name, sex, and salary of each employee.
 
 SELECT e.emp_no, e.last_name, e.first_name, e.sex, s.salary
 FROM employees e
@@ -130,7 +140,7 @@ ON e.emp_no = de.emp_no
 	ON de.dept_no = d.dept_no
 WHERE dept_name = 'Sales' OR dept_name = 'Development'
 
---List the frequency counts, in descending order, of all the employee last names 
+--Listing the frequency counts, in descending order, of all the employee last names 
 --(that is, how many employees share each last name).
 SELECT last_name, COUNT(last_name) AS "last name count"
 FROM employees
